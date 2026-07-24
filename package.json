@@ -1,0 +1,32 @@
+{
+  "name": "consoleize",
+  "version": "0.1.0",
+  "description": "make wow awesome on deck/gabecube, linux/wsl focused",
+  "type": "module",
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun run typecheck && bun build --compile --minify src/index.ts --outfile dist/consoleize",
+    "watch": "bun --watch run src/index.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.10.1",
+    "extract-zip": "^2.0.1",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "bun-types": "^1.2.16",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.0"
+  }
+}
