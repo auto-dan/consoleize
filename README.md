@@ -19,17 +19,17 @@ DialogueUI) straight into your WoW `Interface/AddOns` folder.
 - first-time setup detects common install locations (Steam native, Steam/Proton
   compatdata incl. Steam Deck, Lutris)
 
-## Requirements
+## Quick start (Steam Deck / Linux / WSL)
 
-- Linux (Steam Deck, Steam Machine, desktop) or WSL
-- [Bun](https://bun.sh) (`curl -fsSL https://bun.sh/install | bash`)
-
-## Run
+One line, copy-paste into a terminal:
 
 ```sh
-bun install
-bun run dev
+curl -fsSL https://raw.githubusercontent.com/auto-dan/consoleize/main/setup.sh | bash
 ```
+
+This installs [Bun](https://bun.sh) (user-level, no sudo — safe for the Deck's read-only
+filesystem), downloads consoleize to `~/consoleize`, installs dependencies, and launches
+first-time setup. Re-run the same line any time to launch consoleize again.
 
 First launch walks you through creating a local account (username + WoW AddOns path).
 Everything is stored locally — nothing is uploaded:
@@ -38,6 +38,13 @@ Everything is stored locally — nothing is uploaded:
 | ------ | ------------------------------------------------------- |
 | config | `~/.config/consoleize/config.json`                      |
 | logs   | `~/.local/state/consoleize/consoleize.log` (debug mode) |
+
+## Manual run
+
+```sh
+bun install
+bun run dev
+```
 
 ## Build a standalone binary
 
