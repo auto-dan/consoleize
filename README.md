@@ -19,6 +19,24 @@ DialogueUI) straight into your WoW `Interface/AddOns` folder.
 - first-time setup detects common install locations (Steam native, Steam/Proton
   compatdata incl. Steam Deck, Lutris)
 
+## Prerequisites
+
+consoleize manages addons _inside_ an existing World of Warcraft install, so first you
+need the game itself:
+
+1. **Install World of Warcraft** (Battle.net via Steam/Proton or Lutris). On Steam Deck,
+   the community tool
+   [NonSteamLaunchers](https://github.com/moraroy/NonSteamLaunchers-On-Steam-Deck) makes
+   installing Battle.net (and adding it as a launcher in Game Mode) much easier:
+
+   ```sh
+   /bin/bash -c 'curl -Ls https://raw.githubusercontent.com/moraroy/NonSteamLaunchers-On-Steam-Deck/main/NonSteamLaunchers.sh | nohup /bin/bash -s -- "Battle.net"'
+   ```
+
+2. **Run WoW at least once** — log in and reach the character select screen. This makes
+   the game create its folder structure (`_retail_/Interface/AddOns`, `WTF`, etc.), which
+   consoleize needs before it can do anything useful.
+
 ## Quick start (Steam Deck / Linux / WSL)
 
 One line, copy-paste into a terminal:
