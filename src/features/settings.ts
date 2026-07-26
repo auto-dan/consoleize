@@ -4,6 +4,7 @@ import { clearAddonData, listAddonData } from '../addons/manager.ts';
 import { logFilePath } from '../config/paths.ts';
 import { resetConfig, saveConfig, type UserConfig } from '../config/store.ts';
 import { logger, setDebugLogging } from '../logger.ts';
+import { captureDefaults } from '../profiles/defaults.ts';
 import { confirm, orBack, pause, select, settle } from '../ui/prompts.ts';
 import { clearScreen } from '../ui/screen.ts';
 import { playSound, setSoundsEnabled } from '../ui/sounds.ts';
@@ -75,6 +76,50 @@ async function runClearAddonData(config: UserConfig): Promise<void> {
 }
 
 /**
+ * Maintainer flow (debug mode only): snapshot the local machine's managed
+ * addon SavedVariables into the project profiles/ overlay, scrubbed of
+ * personal data, so curated settings can ship as the defaults.
+ */
+async function runCaptureDefaults(config: UserConfig): Promise<void> {
+  const sure = orBack(
+    await confirm({
+      message:
+        'Overwrite the project profiles/ defaults with your current local addon settings? (personal data is scrubbed)',
+      initialValue: true,
+    }),
+  );
+  if (sure !== true) {
+    p.log.info('capture cancelled - defaults left untouched');
+    await pause();
+    return;
+  }
+
+  const spinner = createSpinner();
+  spinner.start('capturing local addon settings...');
+  try {
+    const result = await captureDefaults(config);
+    spinner.stop('capture complete');
+
+    const lines = [
+      ...result.captured.map((file) => `${pc.green('✓')} ${file}`),
+      '',
+      result.scrubbedKeys.length > 0
+        ? `scrubbed personal data:\n${result.scrubbedKeys.map((key) => pc.dim(`  ${key}`)).join('\n')}`
+        : 'no personal data found',
+      '',
+      pc.dim(`written to ${result.targetDir}`),
+    ];
+    p.note(lines.join('\n'), 'capture local defaults');
+    logger.info('defaults captured', { captured: result.captured });
+  } catch (error) {
+    spinner.stop('capture failed');
+    logger.error('capture defaults failed', { error: String(error) });
+    p.note(pc.red(error instanceof Error ? error.message : String(error)), 'capture failed');
+  }
+  await pause();
+}
+
+/**
  * Settings submenu: toggle debug mode, sounds, check-for-updates-on-launch,
  * clear addon data (danger), or reset the local account. Esc goes back.
  * Returns 'reset' when the account was reset.
@@ -101,6 +146,15 @@ export async function runSettings(config: UserConfig): Promise<'back' | 'reset'>
             label: `check for updates on launch: ${onOff(config.preferences.checkUpdatesOnLaunch)}`,
             hint: 'auto-run update check when the app starts',
           },
+          ...(config.preferences.debug
+            ? [
+                {
+                  value: 'captureDefaults' as const,
+                  label: 'capture local defaults',
+                  hint: 'dev: overwrite profiles/ with your local addon settings (sanitized)',
+                },
+              ]
+            : []),
           {
             value: 'clearData' as const,
             label: pc.red('clear addon data'),
@@ -147,6 +201,10 @@ export async function runSettings(config: UserConfig): Promise<'back' | 'reset'>
           `check for updates on launch ${config.preferences.checkUpdatesOnLaunch ? 'enabled' : 'disabled'}`,
         );
         await settle();
+        break;
+      }
+      case 'captureDefaults': {
+        await runCaptureDefaults(config);
         break;
       }
       case 'clearData': {

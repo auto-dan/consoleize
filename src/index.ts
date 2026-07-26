@@ -1,7 +1,6 @@
 import * as p from '@clack/prompts';
 import pc from 'picocolors';
 import {
-  applyProfiles,
   checkForUpdates,
   getStatuses,
   updateAddons,
@@ -10,6 +9,7 @@ import {
 import { loadConfig, type UserConfig } from './config/store.ts';
 import { runSettings } from './features/settings.ts';
 import { initLogger, logger } from './logger.ts';
+import { applyProfiles } from './profiles/defaults.ts';
 import { runFirstTimeSetup } from './setup.ts';
 import { animateBannerOnce, renderBanner, renderWelcome } from './ui/banner.ts';
 import { progressBar, updateBadge } from './ui/format.ts';
@@ -127,7 +127,8 @@ async function actionUpdateAddons(config: UserConfig): Promise<void> {
 async function actionConsoleizeMe(config: UserConfig): Promise<void> {
   const sure = orBack(
     await confirm({
-      message: 'Consoleize me? Installs/updates all approved addons and applies local defaults.',
+      message:
+        'Consoleize me? Installs/updates all approved addons and applies opinionated defaults.',
       initialValue: true,
     }),
   );
@@ -139,14 +140,14 @@ async function actionConsoleizeMe(config: UserConfig): Promise<void> {
   console.log(renderBanner());
 
   const spinner = createSpinner();
-  spinner.start('applying local profile defaults...');
+  spinner.start('applying opinionated defaults...');
   const profile = await applyProfiles(config);
-  spinner.stop('profile step complete');
+  spinner.stop('defaults step complete');
 
   if (profile.applied) {
-    p.note(`applied: ${(profile.filesCopied ?? []).join(', ')}`, 'profile defaults');
+    p.note(`applied: ${(profile.filesCopied ?? []).join(', ')}`, 'opinionated defaults');
   } else {
-    p.note(profile.reason ?? 'no profile defaults applied', 'profile defaults');
+    p.note(profile.reason ?? 'no defaults applied', 'opinionated defaults');
   }
 
   p.log.success('you are consoleized. launch wow and grab your controller.');

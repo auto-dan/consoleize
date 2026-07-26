@@ -1,7 +1,6 @@
 import { existsSync } from 'node:fs';
-import { cp, readdir, rm } from 'node:fs/promises';
-import { basename, join, resolve } from 'node:path';
-import { wowFlavorRootFromAddonsPath } from '../config/paths.ts';
+import { readdir, rm } from 'node:fs/promises';
+import { basename, join } from 'node:path';
 import { saveConfig, type UserConfig } from '../config/store.ts';
 import { logger } from '../logger.ts';
 import { installAddon } from './installer.ts';
@@ -234,55 +233,4 @@ export async function clearAddonData(config: UserConfig): Promise<{ removed: str
 
   logger.info('addon data cleared', { addonsPath, removed });
   return { removed };
-}
-
-/** Result of applying the local profiles/ overlay. */
-export interface ProfileApplyResult {
-  applied: boolean;
-  reason?: string;
-  filesCopied?: string[];
-}
-
-/**
- * Profile hook for "consoleize me": if a `profiles/` directory exists (cwd,
- * then next to the app), its contents are copied over the WoW flavor root
- * (the folder containing Interface/), so users can drop WTF/SavedVariables
- * defaults in later. MVP: purely opt-in; no-op with an explanation when the
- * directory is missing or empty.
- */
-export async function applyProfiles(config: UserConfig): Promise<ProfileApplyResult> {
-  const candidates = [
-    resolve(process.cwd(), 'profiles'),
-    resolve(import.meta.dir, '../../profiles'),
-  ];
-
-  const profilesDir = candidates.find((dir) => existsSync(dir));
-  if (!profilesDir) {
-    return { applied: false, reason: 'no profiles/ directory found' };
-  }
-
-  const entries = (await readdir(profilesDir)).filter((entry) => !entry.startsWith('.'));
-  if (entries.length === 0) {
-    return {
-      applied: false,
-      reason: 'profiles/ is empty - drop config defaults there to apply them',
-    };
-  }
-
-  const flavorRoot = wowFlavorRootFromAddonsPath(config.wowAddonsPath);
-  if (!flavorRoot) {
-    return {
-      applied: false,
-      reason: `could not derive WoW root from ${config.wowAddonsPath}`,
-    };
-  }
-
-  const copied: string[] = [];
-  for (const entry of entries) {
-    await cp(join(profilesDir, entry), join(flavorRoot, entry), { recursive: true, force: true });
-    copied.push(entry);
-  }
-
-  logger.info('applied profiles', { from: profilesDir, to: flavorRoot, entries: copied });
-  return { applied: true, filesCopied: copied };
 }

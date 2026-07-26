@@ -13,9 +13,10 @@ DialogueUI) straight into your WoW `Interface/AddOns` folder.
 - **check for updates** — polls the addons' public GitHub mirrors for new releases
   (never auto-applies)
 - **update addons** — downloads and installs missing/outdated addons with loading bars
-- **consoleize me** — one-shot: latest of every approved addon + local profile defaults
-- **settings** — debug mode (verbose file logging), check-for-updates-on-launch,
-  reset account
+- **consoleize me** — one-shot: latest of every approved addon + curated addon
+  settings (DynamicCam camera rules, ConsolePort bindings, DialogueUI options)
+- **settings** — debug mode (verbose file logging + maintainer capture tool),
+  check-for-updates-on-launch, reset account
 - first-time setup detects common install locations (Steam native, Steam/Proton
   compatdata incl. Steam Deck, Lutris)
 
@@ -71,11 +72,22 @@ npm run build   # typechecks, then compiles to dist/consoleize
 ./dist/consoleize
 ```
 
-## Profiles hook (optional)
+## Opinionated defaults
 
-`consoleize me` also applies local defaults: drop files into `profiles/` mirroring
-your WoW flavor root (e.g. `profiles/WTF/...`) and they are copied over
-`<WoW>/_retail_/`. Empty by default.
+`consoleize me` applies the curated addon settings shipped in `profiles/`:
+SavedVariables for every managed addon, copied into each account folder under
+`<WoW>/_retail_/WTF/Account/`. The `__ACCOUNT__` placeholder in
+`profiles/WTF/Account/__ACCOUNT__/` expands per account, so defaults land where
+the game reads them no matter the account name — and no personal data (account
+name, character/realm keys, AceDB `profileKeys`) ever ships in the repo.
+
+You can also drop your own files into `profiles/` mirroring the WoW flavor root
+(e.g. `profiles/WTF/Config.wtf`); plain files are copied over `<WoW>/_retail_/`
+verbatim.
+
+**Maintainers:** enable debug mode in settings to reveal **capture local
+defaults**, which rebuilds `profiles/` from your own SavedVariables — scrubbed
+of personal data — so curated changes ship with a commit.
 
 ## Addon sources
 
