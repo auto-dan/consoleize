@@ -4,7 +4,8 @@ make wow awesome on deck/gabecube, linux/wsl focused
 
 A lightweight console app that sets up and maintains World of Warcraft for controller
 play: it installs and updates an opinionated addon loadout (ConsolePort, DynamicCam,
-DialogueUI) straight into your WoW `Interface/AddOns` folder.
+DialogueUI, Dynamic Profiles, Auctionator) straight into your WoW `Interface/AddOns`
+folder.
 
 ## Features
 
@@ -95,11 +96,13 @@ Addons are pulled from their public GitHub mirrors or official CurseForge packag
 API key needed). Addons installed from raw GitHub sources get their `.pkgmeta` libraries
 (Ace3 etc.) resolved automatically.
 
-| addon       | source                                |
-| ----------- | ------------------------------------- |
-| ConsolePort | GitHub: `seblindfors/ConsolePort`     |
-| DynamicCam  | CurseForge package (project `101120`) |
-| DialogueUI  | GitHub: `Peterodox/YUI-Dialogue`      |
+| addon            | source                                 |
+| ---------------- | -------------------------------------- |
+| ConsolePort      | GitHub: `seblindfors/ConsolePort`      |
+| DynamicCam       | CurseForge package (project `101120`)  |
+| DialogueUI       | GitHub: `Peterodox/YUI-Dialogue`       |
+| Dynamic Profiles | CurseForge package (project `1615362`) |
+| Auctionator      | CurseForge package (project `6124`)    |
 
 ## Development
 

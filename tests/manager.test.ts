@@ -3,6 +3,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { clearAddonData, getStatuses, listAddonData } from '../src/addons/manager.ts';
+import { ADDON_MANIFEST } from '../src/addons/manifest.ts';
 import { writeAddonMetadata } from '../src/addons/metadata.ts';
 import { createConfig, type UserConfig } from '../src/config/store.ts';
 
@@ -32,7 +33,7 @@ afterEach(() => {
 describe('getStatuses', () => {
   test('reports not-installed addons', () => {
     const statuses = getStatuses(config);
-    expect(statuses).toHaveLength(3);
+    expect(statuses).toHaveLength(ADDON_MANIFEST.length);
     for (const status of statuses) {
       expect(status.installed).toBe(false);
       expect(status.updateAvailable).toBe(false);
